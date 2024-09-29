@@ -4,6 +4,42 @@ import streamlit.components.v1 as components
 import streamlit as st
 from PIL import Image, ImageDraw, ImageGrab
 import numpy as np
+from supabase import create_client, Client
+
+def init_connection():
+    url = st.secrets['SUPABASE_URL']
+    key = st.secrets['SUPABASE_KEY']
+    return create_client(url, key)
+
+supabase = init_connection()
+
+def sign_in(email, password):
+    try:
+        session = supabase.auth.sign_in_with_password({"email" : email, "password" : password})
+        st.session_state['supabase_session'] = session
+        st.success("Signed in successfully")
+        return session
+    except Exception as e:
+        st.write(f"Authentication failed {e}")
+
+def sign_up(email, password): # ! FIX SIGNUP
+    user = supabase.auth.sign_up({"email":"hual.Alexander@gmail.com","password":password})
+
+
+
+def check_session():
+    if 'supabase_session' in st.session_state:
+            return True
+    else:
+        return False
+    
+def show_user_info():
+     session = st.session_state['supabase_session']
+     st.write(f'Hello 👋 {session.user.user_metadata["email"], session.user.user_metadata}')
+
+def get_user_id():
+    session = st.session_state['supabase_session']
+    return session.user.user_metadata['sub']
 
 
 def take_photo():
@@ -57,6 +93,29 @@ def academics():
 def personal():
     st.title("Ommmm")
 def main_components():
+
+    if not check_session():
+
+        with st.form(key = 'login_form'):
+            email = st.text_input("Email")
+            password = st.text_input("Password", type = "password")
+            submit_button = st.form_submit_button(label = "Sign In")
+            sign_up_button = st.form_submit_button(label = "Sign up")
+
+        if submit_button:
+            session = sign_in(email, password)
+            if session:
+                st.success("You can now visit any page!")
+            else:
+                st.error("Sign in failed")
+        
+        if sign_up_button:
+            session = sign_up(email, password)
+            if session:
+                st.success("You made an account!")
+            else:
+                st.error("Sign up failed")
+                
     st.title("Student Hub")    
 
     st.subheader("Your one-stop solution for bridging digital and physical learning")

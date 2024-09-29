@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 from datetime import date
+from frontend import check_session
+
+if not check_session():
+    st.switch_page('frontend.py')
 
 # Initialize session state
 if 'habits' not in st.session_state:

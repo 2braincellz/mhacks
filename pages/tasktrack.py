@@ -1,8 +1,11 @@
 import streamlit as st
 st.title("Go outside")
-import streamlit as st
 import pandas as pd
 from datetime import datetime, date
+from frontend import check_session
+
+if not check_session():
+    st.switch_page('frontend.py')
 
 # Initialize tasks DataFrame in session state
 if 'tasks' not in st.session_state:

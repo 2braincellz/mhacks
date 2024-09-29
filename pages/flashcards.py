@@ -3,6 +3,11 @@
 import streamlit as st
 import os
 import groq
+from frontend import check_session
+
+if not check_session():
+    st.switch_page('frontend.py')
+    
 client = groq.Client(api_key=os.environ["GROQ_API_KEY"])
 
 st.title("Flashcards")

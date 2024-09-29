@@ -2,6 +2,10 @@ import streamlit as st
 import os
 from groq import Groq
 from typing import Generator
+from frontend import check_session
+
+if not check_session():
+    st.switch_page('frontend.py')
 
 # Show title and description.
 st.title("AI Assistant")

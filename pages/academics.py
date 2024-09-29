@@ -3,6 +3,10 @@ import pandas as pd
 import plotly.express as px
 from streamlit_card import card
 from st_clickable_images import clickable_images
+from frontend import check_session
+
+if not check_session():
+    st.switch_page('frontend.py')
 # Set page config
 st.set_page_config(page_title="Academics", page_icon="🖊️", layout="wide")
  

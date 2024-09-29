@@ -3,6 +3,10 @@ import pandas as pd
 import plotly
 from datetime import date
 import os
+from frontend import check_session
+
+if not check_session():
+    st.switch_page('frontend.py')
 
 # File to store the progress data
 PROGRESS_FILE = "academic_progress.csv"
