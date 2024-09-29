@@ -5,6 +5,7 @@ import base64
 from frontend import supabase
 from PIL import Image
 from OCRget import readImage
+from conversion import create_docx, create_pdf
 
 if not check_session():
     st.switch_page('frontend.py')
@@ -19,6 +20,22 @@ if st.button("Start Scanning"):
 # if uploaded_file is not None:
 #     st.success("File successfully uploaded!")
 
+
+def update_to_database(data, name):
+
+    user_id = get_user_id()
+
+    supabase.table('txt_files').insert({"user_id" : user_id, "type" : 'txt', "txt" : data, "name" : name})
+
+
+    create_docx("./rawtext.txt", f"{name}.docx")
+
+    st.download_button(label = 'Download as docx', data = data, file_name = f"{name}.docx")
+    
+    create_pdf("./rawtext.txt", f"{name}.pdf")
+
+    st.download_button(label = 'Download as pdf', data = data, file_name = f"{name}.pdf")
+        
 
 
 def save_image(image_file):
@@ -40,19 +57,18 @@ def save_image(image_file):
 
     readImage("./"+name)
     st.write("Savedd!")
-
     f = open("./rawtext.txt")
+
+    update_to_database(f, name)
+
+
     # with open("./rawtext.txt", "r") as f:
         # txt = f.read()
 
 
-    st.download_button(label = "Download txt", data = f, file_name = "test.txt")
+    st.download_button(label = "Download txt", data = f, file_name = f"{name}.txt")
 
 
-
-
-
-    
 
 def upload_file():
 
