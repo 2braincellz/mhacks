@@ -1,20 +1,21 @@
 #import streamlit as st
 import streamlit as st
-from frontend import check_session, get_user_id, show_user_info
+from home import check_session, get_user_id, show_user_info
 import base64
-from frontend import supabase
+from home import supabase
 from PIL import Image
 from OCRget import readImage
 from conversion import create_docx, create_pdf
+import os
 
 if not check_session():
-    st.switch_page('frontend.py')
+    st.switch_page('home.py')
 
 st.set_page_config(page_title="journal")
 
 
-if st.button("Start Scanning"):
-    st.write("Scanning initiated...")
+# if st.button("Start Scanning"):
+    # st.write("Scanning initiated...")
 
 # uploaded_file = st.file_uploader("Upload your notes", type=["jpg", "png", "pdf"])
 # if uploaded_file is not None:
@@ -28,13 +29,13 @@ def update_to_database(data, name):
     supabase.table('txt_files').insert({"user_id" : user_id, "type" : 'txt', "txt" : data, "name" : name})
 
 
-    create_docx("./rawtext.txt", f"{name}.docx")
+    # create_docx("./rawtext.txt", f"{name}.docx")
 
-    st.download_button(label = 'Download as docx', data = data, file_name = f"{name}.docx")
+    # st.download_button(label = 'Download as docx', data = data, file_name = f"{name}.docx")
     
-    create_pdf("./rawtext.txt", f"{name}.pdf")
+    # create_pdf("./rawtext.txt", f"{name}.pdf")
 
-    st.download_button(label = 'Download as pdf', data = data, file_name = f"{name}.pdf")
+    # st.download_button(label = 'Download as pdf', data = data, file_name = f"{name}.pdf")
         
 
 
@@ -56,17 +57,24 @@ def save_image(image_file):
     im.save("./"+name, format="PNG")
 
     readImage("./"+name)
-    st.write("Savedd!")
+    st.write("Saved!")
     f = open("./rawtext.txt")
 
-    update_to_database(f, name)
+    update_to_database(f.read(), name)
 
+    create_docx("./rawtext.txt", "./result.docx")
+
+    d = open("./result.docx", "rb")
+    # p = open("./result.pdf")
 
     # with open("./rawtext.txt", "r") as f:
         # txt = f.read()
 
-
-    st.download_button(label = "Download txt", data = f, file_name = f"{name}.txt")
+    filename_without_extension = os.path.splitext(name)[0]
+    
+    # st.download_button(label = "Download txt", data = f, file_name = filename_without_extension+".txt")
+    st.download_button(label = "Download docx", data = d, file_name = filename_without_extension+".docx")
+    # st.download_button(label = "Download txt", data = f, file_name = f"{filename_without_extension}.txt")
 
 
 
@@ -94,7 +102,7 @@ def tools():
     if st.button("Save Image"):
         save_image(img)
 
-    if st.button("See Past Images"):
-        st.switch_page("pages/saved_images.py")
+    # if st.button("See Past Images"):
+        # st.switch_page("pages/saved_images.py")
 
 tools()

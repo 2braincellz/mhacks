@@ -1,12 +1,10 @@
 import streamlit as st
-st.title("Go outside")
-import streamlit as st
 import pandas as pd
 from datetime import datetime, date
-from frontend import check_session
+from home import check_session
 
 if not check_session():
-    st.switch_page('frontend.py')
+    st.switch_page('home.py')
 
 # Initialize tasks DataFrame in session state
 if 'tasks' not in st.session_state:
@@ -17,9 +15,9 @@ def add_task(task, due_date):
     st.session_state.tasks = pd.concat([st.session_state.tasks, new_task], ignore_index=True)
 
 def calculate_days_until_due():
-    today = date.today()
+    today = pd.to_datetime(date.today()) 
     st.session_state.tasks['Due Date'] = pd.to_datetime(st.session_state.tasks['Due Date'])
-    st.session_state.tasks['Due Date'] = st.session_state.tasks['Due Date'].dt.date
+    #st.session_state.tasks['Due Date'] = st.session_state.tasks['Due Date'].dt.date
     st.session_state.tasks['Days Until Due'] = (st.session_state.tasks['Due Date'] - today).dt.days
 def main():
     st.title("Task Tracker")
@@ -65,4 +63,4 @@ def main():
 if __name__ == "__main__":
     main()
 st.markdown("---")
-st.markdown("GAAT: Greatest App of All Time")
+# st.markdown("GAAT: Greatest App of All Time")

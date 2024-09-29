@@ -4,10 +4,10 @@ import pandas as pd
 import plotly.express as px
 from datetime import date
 import os
-from frontend import check_session
+from home import check_session
 
 if not check_session():
-    st.switch_page('frontend.py')
+    st.switch_page('home.py')
 
 # File to store the mood data
 MOOD_FILE = "mood_tracker.csv"

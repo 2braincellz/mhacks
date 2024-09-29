@@ -2,15 +2,15 @@ import streamlit as st
 import os
 from groq import Groq
 from typing import Generator
-from frontend import check_session
+from home import check_session
 
 if not check_session():
-    st.switch_page('frontend.py')
+    st.switch_page('home.py')
 
 # Show title and description.
 st.title("AI Assistant")
 st.write(
-    "This is a chatbot running Meta's LLaMA 3.1 70b model who has analyzed your document. Ask it anything. "
+    "This is a chatbot running Meta's LLaMA 3.1 70b model. Ask it anything. "
 )
 
 # Ask user for their OpenAI API key via `st.text_input`.

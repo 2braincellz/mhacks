@@ -35,7 +35,7 @@ def check_session():
     
 def show_user_info():
      session = st.session_state['supabase_session']
-     st.write(f'Hello 👋 {session.user.user_metadata["email"], session.user.user_metadata}')
+     st.write(f'Hello 👋')
 
 def get_user_id():
     session = st.session_state['supabase_session']
@@ -84,14 +84,11 @@ def create_card(title, description, icon):
 def academics():
     col1, col2 = st.columns(2)
 
-    st.title("Time to lock in buddy")
     with col1:
         create_card("Smart Scanning", "Digitize your notes with OCR", "📷")
     with col2:
         create_card("Flashcard Creator", "Create digital flashcards from physical notes", "🗂️")  
 
-def personal():
-    st.title("Ommmm")
 def main_components():
 
     if not check_session():
@@ -119,14 +116,12 @@ def main_components():
     st.title("Student Hub")    
 
     st.subheader("Your one-stop solution for bridging digital and physical learning")
-    menu = ["Home","Academics","Personal"]
+    menu = ["home","Academics","Personal"]
     choice = st.sidebar.selectbox("What do you need today?",menu)
-    if choice == "Home":
+    if choice == "home":
         st.write("Welcome to the Student Hub!")
     elif choice == "Academics":
         academics()
-    else:
-        personal()
 
 
 
