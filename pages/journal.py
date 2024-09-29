@@ -36,13 +36,17 @@ def save_image(image_file):
     im2 = Image.open(name)
     st.image(im2)
 
+    im.save("./"+name, format="PNG")
 
-
-    readImage(name)
+    readImage("./"+name)
     st.write("Savedd!")
 
+    f = open("./rawtext.txt")
+    # with open("./rawtext.txt", "r") as f:
+        # txt = f.read()
 
-    st.download_button(label = "Download txt", file_name = 'rawtext.txt')
+
+    st.download_button(label = "Download txt", data = f, file_name = "test.txt")
 
 
 

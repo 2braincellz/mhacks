@@ -2,6 +2,8 @@ import os
 from google.cloud import vision
 from groq import Groq
 import base64
+import streamlit as st
+from io import BytesIO
 
 os.environ["GROQ_API_KEY"] = "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"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./handwriting-437018-cdcb9caaa04e.json"
@@ -15,6 +17,8 @@ def detect_document(path):
 
     with open(path, "rb") as image_file:
         content = image_file.read()
+    # image_file = BytesIO(path.read())
+    # content = image_file.read()
 
     image = vision.Image(content=content)
 
@@ -72,6 +76,8 @@ def cross_reference(filePath, imagePath):
     client = Groq()
     with open(imagePath, "rb") as image_file:
         base64_img = base64.b64encode(image_file.read()).decode('utf-8')
+    # bytes_data = imagePath.getvalue()
+    # base64_img = base64.b64encode(bytes_data).decode('utf-8')
     completion = client.chat.completions.create(
         model="llama-3.2-11b-vision-preview",
         messages=[
@@ -94,7 +100,7 @@ def cross_reference(filePath, imagePath):
       )
     with open(filePath, "w") as f:
         f.write(completion.choices[0].message.content) 
-    print(completion.choices[0].message.content)
+    # print(completion.choices[0].message.content)
 
 
 def readImage(filePath):
