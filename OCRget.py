@@ -13,7 +13,7 @@ def detect_document(path):
 
     output = open("rawtext.txt", "w");
 
-    client = vision.ImageAnnotatorClient()
+    client = vision.ImageAnnotatorClient.from_service_account_json("./handwriting-437018-cdcb9caaa04e.json")
 
     with open(path, "rb") as image_file:
         content = image_file.read()
