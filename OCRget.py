@@ -3,6 +3,9 @@ from google.cloud import vision
 from groq import Groq
 import base64
 
+os.environ["GROQ_API_KEY"] = "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"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./handwriting-437018-cdcb9caaa04e.json"
+
 def detect_document(path):
     """Detects document features in an image."""
 
@@ -15,7 +18,7 @@ def detect_document(path):
 
     image = vision.Image(content=content)
 
-    response = client.document_text_detection(image=image)
+    response = client.document_text_detection(image=image, image_context={"language_hints": ["en"]})
 
     for page in response.full_text_annotation.pages:
         for block in page.blocks:
@@ -48,6 +51,21 @@ def detect_document(path):
             "https://cloud.google.com/apis/design/errors".format(response.error.message)
         )
 
+def spell_check(filePath):
+    with open(filePath, "r") as f:
+        fileContent = f.read()
+    client = Groq()
+    completion = client.chat.completions.create(
+        model="llama-3.1-70b-versatile",
+        messages=[{
+            "role" : "user",
+            "content" : "Given this string of text: "+ fileContent + "fix misspelled English words and remove unnecessary whitespace. Do not make additional comments. Do not change the arrangements of words."
+        }]
+    )
+    with open(filePath, "w") as f:
+        f.write(completion.choices[0].message.content)
+
+
 def cross_reference(filePath, imagePath):
     with open(filePath, "r") as f:
         fileContent = f.read()
@@ -62,7 +80,7 @@ def cross_reference(filePath, imagePath):
                 "content": [
                     {
                         "type": "text",
-                        "text": "Format the following string: "+fileContent+"based on the structure of the text in the image. Do not change the spelling of any word. Make no comments."
+                        "text": "Format the following string: "+fileContent+"\n based on the structure of the text in the image, including proper line breaks. Do not change the spelling of any word. Separate each paragraph and do not bold or italicize. Do not comment"
                     },
                     {
                         "type": "image_url",
@@ -74,11 +92,16 @@ def cross_reference(filePath, imagePath):
             },
         ]
       )
+    with open(filePath, "w") as f:
+        f.write(completion.choices[0].message.content) 
     print(completion.choices[0].message.content)
 
 
+def readImage(filePath):
+    detect_document(filePath)
+    spell_check("rawtext.txt")
+    cross_reference("rawtext.txt", filePath)
 
 
-imagePath = "./test.webp"
-detect_document(imagePath)
-cross_reference("rawtext.txt", imagePath)
+
+# readImage("./test4.webp")
